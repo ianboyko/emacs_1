@@ -59,14 +59,13 @@
  '(custom-enabled-themes '(deeper-blue))
  '(custom-safe-themes t)
  '(global-display-line-numbers-mode t)
- '(helm-mode t)
  '(inhibit-startup-screen t)
  '(org-bullets-bullet-list '("◉" "○" ">" "-"))
  '(org-export-backends '(ascii html icalendar latex md odt org))
  '(org-hide-emphasis-markers t)
  '(org-support-shift-select 'always)
  '(package-selected-packages
-   '(org-roam helpful ox-epub nov org-superstar org-bullets hippie-expand-slime mu4e-overview ox-hugo ham-mode hackernews emmet-mode markdown-mode yasnippet org-edna))
+   '(exec-path-from-shell ox-pandoc org-roam helpful ox-epub nov org-superstar org-bullets hippie-expand-slime mu4e-overview ox-hugo ham-mode hackernews emmet-mode markdown-mode yasnippet org-edna))
  '(split-window-horizontally t)
  '(word-wrap t))
 (custom-set-faces
@@ -74,7 +73,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :extend nil :stipple nil :background "#181a26" :foreground "gray80" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 155 :width normal :foundry "GOOG" :family "Noto Sans"))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "#181a26" :foreground "gray80" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 200 :width normal :foundry "nil" :family "Calibri"))))
  '(helm-selection ((t (:extend t :background "khaki1" :distant-foreground "black"))))
  '(line-number ((t (:inherit (shadow default) :foreground "dim gray"))))
  '(linum ((t (:inherit (shadow default) :foreground "DodgerBlue4" :foundry "GOOG" :family ""))))
@@ -109,7 +108,6 @@
 ;; new keybind for <f12>
 (global-set-key [(f12)] 'flyspell-correct-word-before-point)
 
-
 ;; Replace list hyphen with dot
  (font-lock-add-keywords 'org-mode
                           '(("^ *\\([-]\\) "
@@ -120,3 +118,8 @@
 ;; (require 'nov)
 ;; (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
+;; make bash default shell
+(setq explicit-shell-file-name "/bin/bash")
+
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
