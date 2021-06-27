@@ -6,9 +6,6 @@
 (add-hook 'text-mode-hook 'flyspell-mode)
 (add-hook 'markdown-mode-hook 'flyspell-mode)
 (add-hook 'window-setup-hook 'toggle-frame-maximized t) ; full screen on start
-;;org-roam stuff
-(add-to-list 'load-path "~/Sync/org/personal")
-(require 'org-roam)
 
 (setq initial-scratch-message nil)
 
@@ -26,9 +23,9 @@
 ;;DISABLE BELL FUNCTION
 (setq ring-bell-function 'ignore)
 
-; Org-mode stop indentation
-; disable indentation **WAIT I LIKE INDENTS**
-; (setq org-adapt-indentation nil)
+;; Org-mode stop indentation
+;; disable indentation
+(setq org-adapt-indentation nil)
 
 ;;UNFILL DAMNIT!
 (defun unfill-region (begin end)
@@ -60,12 +57,14 @@
  '(custom-safe-themes t)
  '(global-display-line-numbers-mode t)
  '(inhibit-startup-screen t)
+ '(org-agenda-files '("~/Sync/org/personal/inbox.org"))
+ '(org-archive-location "~/Sync/org/personal/archive.org::* From %s")
  '(org-bullets-bullet-list '("◉" "○" ">" "-"))
  '(org-export-backends '(ascii html icalendar latex md odt org))
  '(org-hide-emphasis-markers t)
  '(org-support-shift-select 'always)
  '(package-selected-packages
-   '(exec-path-from-shell ox-pandoc org-roam helpful ox-epub nov org-superstar org-bullets hippie-expand-slime mu4e-overview ox-hugo ham-mode hackernews emmet-mode markdown-mode yasnippet org-edna))
+   '(pabbrev org-roam helpful ox-epub nov org-superstar org-bullets hippie-expand-slime mu4e-overview ox-hugo ham-mode hackernews emmet-mode markdown-mode yasnippet org-edna))
  '(split-window-horizontally t)
  '(word-wrap t))
 (custom-set-faces
@@ -73,7 +72,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :extend nil :stipple nil :background "#181a26" :foreground "gray80" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 200 :width normal :foundry "nil" :family "Calibri"))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "#181a26" :foreground "gray80" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 155 :width normal :foundry "GOOG" :family "Noto Sans"))))
  '(helm-selection ((t (:extend t :background "khaki1" :distant-foreground "black"))))
  '(line-number ((t (:inherit (shadow default) :foreground "dim gray"))))
  '(linum ((t (:inherit (shadow default) :foreground "DodgerBlue4" :foundry "GOOG" :family ""))))
@@ -86,6 +85,7 @@
 
 (global-visual-line-mode t)
 
+;;emacs post
 (load "~/.emacs.d/post")
 (require 'post)
 
@@ -108,18 +108,42 @@
 ;; new keybind for <f12>
 (global-set-key [(f12)] 'flyspell-correct-word-before-point)
 
+;;new keybind for C-;
+(global-set-key (kbd "C-;") #'other-window)
+(global-set-key (kbd "C-,") #'prev-window)
+
+(defun prev-window ()
+  (interactive)
+  (other-window -1))
+
 ;; Replace list hyphen with dot
  (font-lock-add-keywords 'org-mode
                           '(("^ *\\([-]\\) "
                              (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
 ;; Epub shite that doesn't work 
-;; (add-to-list 'load-path "~/.emacs.d/lisp/")
-;; (require 'nov)
-;; (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+(require 'nov)
+(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
-;; make bash default shell
-(setq explicit-shell-file-name "/bin/bash")
+;;pabbrev mode
+(require 'pabbrev)
+(defun my-org-mode-settings ()
+   (pabbrev-mode))
+(add-hook 'org-mode-hook 'my-org-mode-settings)
+(global-pabbrev-mode)
+;(global-smart-tab-mode 1) ;;I get an error
 
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
+(setq org-todo-keywords
+      '((sequence "TODO" "WAITING" "CANCELLED" "DONE")))
+
+;; Org mode new item doesn't split header
+(setq org-M-RET-may-split-line '((item . nil)))
+
+;; Org mode target for capture
+(setq org-default-notes-file (concat org-directory "~/Sync/org/personal/inbox.org"))
+
+;; Org mode sample capture template
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/Sync/org/personal/inbox.org" "Inbox")
+         "* TODO %?\n  %i\n  %a")))
